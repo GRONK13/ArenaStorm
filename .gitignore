@@ -6,6 +6,10 @@
 [Ll]og/
 [Ll]ogs/
 publish/
+dist/
+data/
+*.log
+*.pid
 
 # Visual Studio files
 .vs/

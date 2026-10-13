@@ -86,7 +86,31 @@ This is the easiest and most isolated way to run the entire backend stack.
 
 ---
 
-## Deployment Option 2: Linux Bare-Metal (Ubuntu / Debian / systemd)
+## Deployment Option 2: Linux School Server (Non-Sudo / Student Account)
+
+If you have a student or non-root user account (without `sudo` access), use the **User-Space Deployment**:
+
+```bash
+# 1. Update your local repository
+git pull
+
+# 2. Grant execute permissions
+chmod +x deploy/linux/setup-user-server.sh start-server.sh stop-server.sh status-server.sh
+
+# 3. Build & start the server stack
+./start-server.sh
+```
+
+**How this works without sudo:**
+- Automatically downloads and installs .NET 9 SDK into `~/.dotnet` using Microsoft's user-space install script if .NET 9 is not on the system.
+- Builds both `ArenaStorm.WebAPI` and `ArenaStorm.Server` directly inside your home directory.
+- Runs Web API on port **5000** backed by a self-initializing SQLite database file (`data/arenastorm.db`)—no PostgreSQL administration or root database required!
+- Runs UDP Authoritative Game Server on port **9050**.
+- Manages processes via `nohup` in the background with PID tracking (`./status-server.sh`, `./stop-server.sh`).
+
+---
+
+## Deployment Option 3: Linux with Sudo / Systemd Root Privileges
 
 If your school server runs native Linux without Docker, you have two simple ways to deploy:
 
