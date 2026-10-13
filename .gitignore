@@ -1,0 +1,32 @@
+## Visual Studio / .NET / MonoGame .gitignore
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+publish/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# MonoGame pipeline cache
+.mgcontent/
+
+# Test results
+TestResults/
+[Tt]est[Rr]esult*/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment and sensitive files
+.env
+*.db
+*.sqlite

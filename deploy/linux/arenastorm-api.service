@@ -1,0 +1,17 @@
+[Unit]
+Description=ArenaStorm Web API Service
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=arenastorm
+WorkingDirectory=/opt/arenastorm/webapi
+ExecStart=/usr/bin/dotnet /opt/arenastorm/webapi/ArenaStorm.WebAPI.dll
+Restart=always
+RestartSec=5
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_HTTP_PORTS=5000
+Environment=ConnectionStrings__DefaultConnection=Host=localhost;Database=arenaStorm;Username=postgres;Password=postgres
+
+[Install]
+WantedBy=multi-user.target

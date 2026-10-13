@@ -1,0 +1,23 @@
+# Multi-stage build for ArenaStorm UDP Authoritative Dedicated Server
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /app
+
+# Copy csproj files and restore dependencies
+COPY src/ArenaStorm.Shared/ArenaStorm.Shared.csproj src/ArenaStorm.Shared/
+COPY src/ArenaStorm.Server/ArenaStorm.Server.csproj src/ArenaStorm.Server/
+RUN dotnet restore src/ArenaStorm.Server/ArenaStorm.Server.csproj
+
+# Copy source code and publish
+COPY src/ArenaStorm.Shared/ src/ArenaStorm.Shared/
+COPY src/ArenaStorm.Server/ src/ArenaStorm.Server/
+RUN dotnet publish src/ArenaStorm.Server/ArenaStorm.Server.csproj -c Release -o /app/publish /p:UseAppHost=false
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/runtime:9.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/publish .
+
+ENV GAME_SERVER_PORT=9050
+EXPOSE 9050/udp
+
+ENTRYPOINT ["dotnet", "ArenaStorm.Server.dll"]

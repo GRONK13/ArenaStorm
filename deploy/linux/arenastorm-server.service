@@ -1,0 +1,15 @@
+[Unit]
+Description=ArenaStorm Authoritative UDP Game Server
+After=network.target
+
+[Service]
+Type=simple
+User=arenastorm
+WorkingDirectory=/opt/arenastorm/server
+ExecStart=/usr/bin/dotnet /opt/arenastorm/server/ArenaStorm.Server.dll 9050
+Restart=always
+RestartSec=5
+Environment=GAME_SERVER_PORT=9050
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: arenastorm-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-arenaStorm}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_school_secret_2026}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-arenaStorm}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  webapi:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: arenastorm-webapi
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=${POSTGRES_DB:-arenaStorm};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres_school_secret_2026}
+      Jwt__Key: ${JWT_SECRET:-ArenaStorm_SuperSecret_JWT_Key_2026_SchoolServerDeployment!}
+      Jwt__Issuer: ArenaStorm
+      Jwt__Audience: ArenaStormPlayers
+      Jwt__ExpiryHours: 24
+    ports:
+      - "5000:5000"
+
+  gameserver:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: arenastorm-gameserver
+    restart: unless-stopped
+    environment:
+      GAME_SERVER_PORT: 9050
+    ports:
+      - "9050:9050/udp"
+
+volumes:
+  postgres_data:
